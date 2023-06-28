@@ -31,6 +31,7 @@ const RegisterForm = () => {
             gender:'male',
             mobile:'',
             password:'',
+            confirmPassword: '',
             remember: false
         },
         resolver: yupResolver(schema)
@@ -99,9 +100,17 @@ const RegisterForm = () => {
 
             <TextFields 
                 label='Password' 
-                inputProps={{type: 'password'}} 
+                inputProps={{type: 'password', autoComplete:"current-password"}} 
                 control={control}
                 name='password'
+                errors={errors}
+            />
+
+            <TextFields 
+                label='Confirm Password' 
+                inputProps={{type: 'password' ,  autoComplete:"current-password"}} 
+                control={control}
+                name='confirmPassword'
                 errors={errors}
             />
 

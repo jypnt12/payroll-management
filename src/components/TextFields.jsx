@@ -20,6 +20,7 @@ const TextFields = ({label, inputProps, control, name, errors}) => {
                     variant='outlined' 
                     InputProps={inputProps}
                     size="small"
+                   
                 />
             )}
         />

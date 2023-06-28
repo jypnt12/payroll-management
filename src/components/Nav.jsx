@@ -13,6 +13,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { Link as RouterLink, MemoryRouter,  useNavigate } from 'react-router-dom';
+import Link from '@mui/material/Link';
+import { useSelector,useDispatch } from 'react-redux';
+import { Grid } from '@mui/material';
+import { useLogoutMutation } from '../slices/userApiSlice';
+import { logout } from '../slices/authSlice'
+
 
 
 const pages = [
@@ -28,11 +35,27 @@ const pages = [
   'DTR'
 ];
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Account', 'Dashboard'];
 
 function Nav() {
   const [anchorElNav, setAnchorElNav] =useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); 
+
+  const [logoutApiCall ] = useLogoutMutation();
+
+  const logoutHandler = async ()=> {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate('/')
+    } catch (err){
+
+    }
+  }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -57,12 +80,12 @@ function Nav() {
         <Toolbar disableGutters>
 
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-
+          {/* <Link component={RouterLink} to="/"> */}
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            component={RouterLink}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -75,7 +98,7 @@ function Nav() {
           >
             PAYROLL
           </Typography>
-
+          {/* </Link> */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 
             <IconButton
@@ -112,7 +135,10 @@ function Nav() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}  >
-                  <Typography textAlign="center"  >{page}</Typography>
+                  <Typography textAlign="center"  component={RouterLink} to={`${page}`} sx={{
+              color: 'inherit',
+              textDecoration: 'none',
+            }}>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -124,8 +150,8 @@ function Nav() {
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="/"
+            component={RouterLink} 
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -143,7 +169,9 @@ function Nav() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                href={`/${page}`}
+                component={RouterLink} 
+                to={`/${page}`}
+                // href={`/${page}`}
                 key={page}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
@@ -154,13 +182,20 @@ function Nav() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            
+          <Grid container spacing={2} columns={16}>
+            <Grid item xs={8}>
+              
+              {userInfo && <Typography textAlign="center">{userInfo.name}</Typography> }
+            </Grid>
+            <Grid item xs={8}>
+
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src="" />
               </IconButton>
             </Tooltip>
-
+            </Grid>
+            </Grid>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -178,10 +213,13 @@ function Nav() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu} component="a" href={`/${setting}`}>
+                <MenuItem key={setting} onClick={handleCloseUserMenu} component={RouterLink}  to={`/${setting}`}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem key={'logout'} onClick={logoutHandler} >
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
             </Menu>
 
           </Box>

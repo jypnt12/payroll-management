@@ -5,6 +5,8 @@
   
   head,body {
     margin: 0 ;
+    padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;
     /* display: flex; */
     /* place-items: center;
     min-width: 320px;
